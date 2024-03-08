@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <title>Cotação</title>
+</head>
+<body>
+    <h1 class="mb-5 pt-5 text-center bg-secondary text-white display-5">Formulário de Cotação</h1>
+    <div class="container">
+        <div class="row justify-content-center">
+    <form class="text-center col-10 col-lg-10 needs-validation" novalidate> 
+        <div class="form-floating mb-3">
+            <input class="form-control" type="text" id="nome" name="nome" placeholder="" autofocus required>
+            <label for="nome">Nome:</label>
+        </div>
+        <div class="form-floating mb-3">
+            <input class="form-control" placeholder="" type="email" id="email" name="email" required>
+            <label for="email">E-mail:</label>
+        </div>
+        <div class="row">
+            <div class="form-floating mb-3 col-6">
+                <input class="form-control" placeholder="" type="tel" id="telefone" name="telefone" required>
+                <label class="ms-2" for="telefone">Telefone:</label>
+            </div>
+            <div class="form-floating mb-3 col-6">
+                <input class="form-control" placeholder=""  type="number" id="num" name="num" required>
+                <label class="ms-2" for="cep">Valor:</label>
+            </div>
+        </div>
+        <button type="button" class="btn btn-primary m-3" onclick="cotacao()">Pesquisar</button>        
+        <div class="form-floating mb-3">
+            <input class="form-control" placeholder=""  type="text" id="dolar" name="endereco" disabled required>
+            <label class="ms-2" for="endereco">Dolar para o Real</label>
+        </div>
+        <div class="row">
+            <div class="form-floating mb-3 ">
+                <input class="form-control" placeholder=""  type="text" id="euro" name="numero" disabled required>
+                <label class="ms-2" for="numero">Euro para Real</label>
+            </div>
+            <div class="form-floating mb-3 ">
+                <input class="form-control" placeholder=""  type="text" id="bitcoin" name="complemento" disabled required>
+                <label class="ms-2" for="complemento">Biticoin para Real</label>
+            </div>
+        </div>
+    </form>
+    <script>
+        async function cotacao() {
+    const num = document.getElementById("num").value;
+    const dolarInput = document.getElementById("dolar");
+    const euroInput = document.getElementById("euro");
+    const bitInput = document.getElementById("bitcoin");
+    const apiUrl = `https://economia.awesomeapi.com.br/last/USD-BRL,EUR-BRL,BTC-BRL`;
+    
+    try {
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+        
+        if (!response.ok) {
+            alert("Valores não encontrados. Por favor, verifique e tente novamente.");
+        } else {
+                const valorConvertido = parseFloat(num);
+                dolarInput.value = (valorConvertido * data["USDBRL"]["bid"]).toFixed(2);
+                dolarInput.disabled = true;
+                euroInput.value = (valorConvertido * data["EURBRL"]["bid"]).toFixed(2); 
+                euroInput.disabled = true;
+                bitInput.value = (valorConvertido * data["BTCBRL"]["bid"]).toFixed(6); 
+                bitInput.disabled = true;
+            }
+    } catch (error) {
+        console.error("Erro ao buscar informações dos valores", error);
+    }
+}
+
+        (() => {
+            'use strict'
+            const forms = document.querySelectorAll('.needs-validation')
+    
+            Array.from(forms).forEach(form => {
+              form.addEventListener('click', event => {
+                if (!form.checkValidity()) {
+                  event.preventDefault()
+                  event.stopPropagation()
+                }
+          
+                form.classList.add('was-validated')
+              }, false)
+            })
+          })()
+    </script>
+</body>
+</html>
